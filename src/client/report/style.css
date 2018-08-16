@@ -1,0 +1,22 @@
+table {
+  width: 100%;
+  font-family: 'Roboto', sans-serif
+}
+
+thead {
+  background-color: black;
+  color: white;
+}
+
+thead td {
+  padding: 10px;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background: #CCC;
+}
+
+tbody tr:nth-child(odd) {
+  background: #FFF;
+}
