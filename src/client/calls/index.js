@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Report from '../report';
-
+import Dropdown from '../dropdown';
 import { WHISPER_AREAS, CONTRACTORS, CALL_TYPES, CONTACT_TYPES } from '../../SampleData';
 import './style.css';
 
@@ -10,8 +10,7 @@ const INITIAL_STATE =  {
   contractor: '',
   call_type: '',
   contact_type: '',
-  calls: [],
-  saveEnabled: false
+  calls: []
 }
 
 export default class Calls extends Component {
@@ -19,8 +18,6 @@ export default class Calls extends Component {
     super(props);
 
     this.state = INITIAL_STATE;
-
-    this.renderSelect = this.renderSelect.bind(this);
     this.save = this.save.bind(this);
     this.update = this.update.bind(this);
   }
@@ -40,7 +37,7 @@ export default class Calls extends Component {
         contractor,
         call_type,
         contact_type
-      }]
+      }],
     });
   }
 
@@ -49,30 +46,7 @@ export default class Calls extends Component {
 
     this.setState({
       [e.target.name]: e.target.value,
-      saveEnabled: (whisper_area && contractor && call_type && contact_type)
     });
-  }
-
-  renderItem(index, id, name) {
-    return (
-      <option key={index} value={id}> {name} </option>
-    );
-  }
-
-  renderSelect(name, label, items, current) {
-    return (
-      <div>
-        <label htmlFor={name}>{label}</label>
-        <select name={name} value={current} onChange={this.update}>
-          <option value="">{label}</option>
-          {
-            items.map((item, index) => {
-              return this.renderItem(index, item.id, item.name)
-            })
-          }
-        </select>
-      </div>
-    );
   }
 
   render() {
@@ -84,18 +58,10 @@ export default class Calls extends Component {
     return(
       <div>
         <form>
-          {
-            this.renderSelect("contact_type", "Contact Type", CONTACT_TYPES, contact_type)
-          }
-          {
-            this.renderSelect("whisper_area", "Whisper Area", WHISPER_AREAS, whisper_area)
-          }
-          {
-            this.renderSelect("contractor", "Contractor", CONTRACTORS, contractor)
-          }
-          {
-            this.renderSelect("call_type", "Call Type", CALL_TYPES, call_type)
-          }
+          <Dropdown name="contact_type" label="Contact Type" items={CONTACT_TYPES} current={contact_type} onChange={this.update} />
+          <Dropdown name="whisper_area" label="Whisper Area" items={WHISPER_AREAS} current={whisper_area} onChange={this.update} />
+          <Dropdown name="contractor" label="Contractor" items={CONTRACTORS} current={contractor} onChange={this.update} />
+          <Dropdown name="call_type" label="Call Type" items={CALL_TYPES} current={call_type} onChange={this.update} />
           <br />
           <button onClick={this.save} disabled={!isEnabled}>
             Save Call

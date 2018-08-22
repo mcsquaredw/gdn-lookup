@@ -19937,6 +19937,8 @@ var _SampleData = require('../../SampleData');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -19957,10 +19959,17 @@ var Report = function (_Component) {
       fromDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 0, 0, 0),
       toDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 23, 59, 999)
     };
+
+    _this.updateDate = _this.updateDate.bind(_this);
     return _this;
   }
 
   _createClass(Report, [{
+    key: 'updateDate',
+    value: function updateDate(ev) {
+      this.setState(_defineProperty({}, ev.target.name, ev.target.value));
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _props = this.props,
@@ -19970,6 +19979,12 @@ var Report = function (_Component) {
           fromDate = _state.fromDate,
           toDate = _state.toDate;
 
+      var filteredCalls = calls.filter(function (item) {
+        item.timestamp <= toDate && item.timestamp >= fromDate;
+      });
+
+      console.log(filteredCalls);
+      console.log(calls);
 
       return _react2.default.createElement(
         'div',
@@ -20013,7 +20028,7 @@ var Report = function (_Component) {
           _react2.default.createElement(
             'tbody',
             null,
-            calls.map(function (item, index) {
+            filteredCalls.map(function (item, index) {
               return _react2.default.createElement(
                 'tr',
                 { key: index },
@@ -20054,7 +20069,89 @@ var Report = function (_Component) {
 }(_react.Component);
 
 exports.default = Report;
-},{"react":"node_modules\\react\\index.js","./style.css":"src\\client\\report\\style.css","../../SampleData":"src\\SampleData\\index.js"}],"src\\client\\calls\\style.css":[function(require,module,exports) {
+},{"react":"node_modules\\react\\index.js","./style.css":"src\\client\\report\\style.css","../../SampleData":"src\\SampleData\\index.js"}],"src\\client\\dropdown\\index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Dropdown = function (_Component) {
+  _inherits(Dropdown, _Component);
+
+  function Dropdown(props) {
+    _classCallCheck(this, Dropdown);
+
+    return _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this, props));
+  }
+
+  _createClass(Dropdown, [{
+    key: "renderItem",
+    value: function renderItem(index, id, name) {
+      return _react2.default.createElement(
+        "option",
+        { key: index, value: id },
+        " ",
+        name,
+        " "
+      );
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var _props = this.props,
+          items = _props.items,
+          name = _props.name,
+          current = _props.current,
+          label = _props.label,
+          onChange = _props.onChange;
+
+
+      return _react2.default.createElement(
+        "div",
+        null,
+        _react2.default.createElement(
+          "label",
+          { htmlFor: name },
+          label
+        ),
+        _react2.default.createElement(
+          "select",
+          { name: name, value: current, onChange: onChange },
+          _react2.default.createElement(
+            "option",
+            { value: "" },
+            label
+          ),
+          items.map(function (item, index) {
+            return _this2.renderItem(index, item.id, item.name);
+          })
+        )
+      );
+    }
+  }]);
+
+  return Dropdown;
+}(_react.Component);
+
+exports.default = Dropdown;
+},{"react":"node_modules\\react\\index.js"}],"src\\client\\calls\\style.css":[function(require,module,exports) {
 
 var reloadCSS = require('_css_loader');
 module.hot.dispose(reloadCSS);
@@ -20077,6 +20174,10 @@ var _report = require('../report');
 
 var _report2 = _interopRequireDefault(_report);
 
+var _dropdown = require('../dropdown');
+
+var _dropdown2 = _interopRequireDefault(_dropdown);
+
 var _SampleData = require('../../SampleData');
 
 require('./style.css');
@@ -20098,8 +20199,7 @@ var INITIAL_STATE = {
   contractor: '',
   call_type: '',
   contact_type: '',
-  calls: [],
-  saveEnabled: false
+  calls: []
 };
 
 var Calls = function (_Component) {
@@ -20111,8 +20211,6 @@ var Calls = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Calls.__proto__ || Object.getPrototypeOf(Calls)).call(this, props));
 
     _this.state = INITIAL_STATE;
-
-    _this.renderSelect = _this.renderSelect.bind(_this);
     _this.save = _this.save.bind(_this);
     _this.update = _this.update.bind(_this);
     return _this;
@@ -20147,8 +20245,6 @@ var Calls = function (_Component) {
   }, {
     key: 'update',
     value: function update(e) {
-      var _setState;
-
       var _state2 = this.state,
           whisper_area = _state2.whisper_area,
           contractor = _state2.contractor,
@@ -20156,45 +20252,7 @@ var Calls = function (_Component) {
           contact_type = _state2.contact_type;
 
 
-      this.setState((_setState = {}, _defineProperty(_setState, e.target.name, e.target.value), _defineProperty(_setState, 'saveEnabled', whisper_area && contractor && call_type && contact_type), _setState));
-    }
-  }, {
-    key: 'renderItem',
-    value: function renderItem(index, id, name) {
-      return _react2.default.createElement(
-        'option',
-        { key: index, value: id },
-        ' ',
-        name,
-        ' '
-      );
-    }
-  }, {
-    key: 'renderSelect',
-    value: function renderSelect(name, label, items, current) {
-      var _this2 = this;
-
-      return _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement(
-          'label',
-          { htmlFor: name },
-          label
-        ),
-        _react2.default.createElement(
-          'select',
-          { name: name, value: current, onChange: this.update },
-          _react2.default.createElement(
-            'option',
-            { value: '' },
-            label
-          ),
-          items.map(function (item, index) {
-            return _this2.renderItem(index, item.id, item.name);
-          })
-        )
-      );
+      this.setState(_defineProperty({}, e.target.name, e.target.value));
     }
   }, {
     key: 'render',
@@ -20214,10 +20272,10 @@ var Calls = function (_Component) {
         _react2.default.createElement(
           'form',
           null,
-          this.renderSelect("contact_type", "Contact Type", _SampleData.CONTACT_TYPES, contact_type),
-          this.renderSelect("whisper_area", "Whisper Area", _SampleData.WHISPER_AREAS, whisper_area),
-          this.renderSelect("contractor", "Contractor", _SampleData.CONTRACTORS, contractor),
-          this.renderSelect("call_type", "Call Type", _SampleData.CALL_TYPES, call_type),
+          _react2.default.createElement(_dropdown2.default, { name: 'contact_type', label: 'Contact Type', items: _SampleData.CONTACT_TYPES, current: contact_type, onChange: this.update }),
+          _react2.default.createElement(_dropdown2.default, { name: 'whisper_area', label: 'Whisper Area', items: _SampleData.WHISPER_AREAS, current: whisper_area, onChange: this.update }),
+          _react2.default.createElement(_dropdown2.default, { name: 'contractor', label: 'Contractor', items: _SampleData.CONTRACTORS, current: contractor, onChange: this.update }),
+          _react2.default.createElement(_dropdown2.default, { name: 'call_type', label: 'Call Type', items: _SampleData.CALL_TYPES, current: call_type, onChange: this.update }),
           _react2.default.createElement('br', null),
           _react2.default.createElement(
             'button',
@@ -20234,7 +20292,7 @@ var Calls = function (_Component) {
 }(_react.Component);
 
 exports.default = Calls;
-},{"react":"node_modules\\react\\index.js","../report":"src\\client\\report\\index.js","../../SampleData":"src\\SampleData\\index.js","./style.css":"src\\client\\calls\\style.css"}],"src\\client\\app\\index.js":[function(require,module,exports) {
+},{"react":"node_modules\\react\\index.js","../report":"src\\client\\report\\index.js","../dropdown":"src\\client\\dropdown\\index.js","../../SampleData":"src\\SampleData\\index.js","./style.css":"src\\client\\calls\\style.css"}],"src\\client\\app\\index.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20343,7 +20401,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '55194' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '53705' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

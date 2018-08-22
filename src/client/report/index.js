@@ -13,11 +13,25 @@ export default class Report extends Component {
       fromDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 0, 0, 0),
       toDate: new Date(now.getFullYear(), now.getMonth(), now.getDay(), 23, 59, 999)
     }
+
+    this.updateDate = this.updateDate.bind(this);
+  }
+
+  updateDate(ev) {
+    this.setState({
+      [ev.target.name] : ev.target.value
+    });
   }
 
   render() {
     const { calls, classes } = this.props;
     const { fromDate, toDate } = this.state;
+    const filteredCalls = calls.filter(item => {
+      item.timestamp <= toDate && item.timestamp >= fromDate
+    });
+
+    console.log(filteredCalls);
+    console.log(calls);
 
     return (
       <div>
@@ -33,7 +47,7 @@ export default class Report extends Component {
           </thead>
           <tbody>
             {
-              calls.map((item,index) => {
+              filteredCalls.map((item,index) => {
                 return (
                   <tr key={index}>
                     <td>{item.timestamp.toString()}</td>

@@ -20,6 +20,10 @@ tbody tr:nth-child(even) {
 tbody tr:nth-child(odd) {
   background: #FFF;
 }
+
+td {
+  padding: 5px;
+}
 div {
   width: 100%;
 }
